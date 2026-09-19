@@ -139,7 +139,8 @@ export default function VideoTour360() {
           {/* The video element */}
           <video
             ref={videoRef}
-            src="/videos/EMPL_Autorun.mp4"
+            src="https://assets.mixkit.co/videos/4170/4170-1080.mp4"
+            poster="https://assets.mixkit.co/videos/4170/4170-thumb-720-0.jpg"
             muted
             playsInline
             preload="metadata"

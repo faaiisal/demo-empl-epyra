@@ -34,7 +34,8 @@ export default function Hero() {
       {/* ── Full-bleed autoplay looping video ── */}
       <div className="absolute inset-0 z-0">
         <video
-          src="/videos/EMPL_Autorun.mp4"
+          src="https://assets.mixkit.co/videos/4170/4170-1080.mp4"
+          poster="https://assets.mixkit.co/videos/4170/4170-thumb-720-0.jpg"
           autoPlay
           loop
           muted
