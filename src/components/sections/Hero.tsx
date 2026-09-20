@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 
 type SearchFilters = {
   location: string
@@ -11,7 +11,6 @@ type SearchFilters = {
 
 export default function Hero() {
   const t = useTranslations('hero')
-  const locale = useLocale()
   const [filters, setFilters] = useState<SearchFilters>({
     location: '',
     type: '',
@@ -34,8 +33,7 @@ export default function Hero() {
       {/* ── Full-bleed autoplay looping video ── */}
       <div className="absolute inset-0 z-0">
         <video
-          src="https://assets.mixkit.co/videos/4170/4170-1080.mp4"
-          poster="https://assets.mixkit.co/videos/4170/4170-thumb-720-0.jpg"
+          src="https://test.onebrand.bd/public/empl_intro.mp4"
           autoPlay
           loop
           muted
@@ -58,13 +56,7 @@ export default function Hero() {
       {/* ── Centre headline — 2 lines ── */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-4">
         <h1
-          className="text-white text-center leading-tight select-none"
-          style={{
-            fontSize: 'clamp(2.2rem, 5.5vw, 4.5rem)',
-            fontWeight: 900,
-            fontFamily: locale === 'bn' ? 'var(--font-bangla)' : 'var(--font-sans)',
-            letterSpacing: locale === 'bn' ? '0' : '-0.03em',
-          }}
+          className="hero-heading text-white text-center select-none"
         >
           <span className="block">{t('heroLine1')}</span>
           <span className="block">{t('heroLine2')}</span>

@@ -4,21 +4,19 @@ import { useState, useMemo, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { projects } from '@/data/projects'
 import { ProjectCard } from '@/components/ui/ProjectCard'
-import type { District, ProjectType, BudgetBracket, ProjectStatus } from '@/types/project'
+import type { District, ProjectType, ProjectStatus } from '@/types/project'
 
 type View = 'list' | 'map'
 
 interface Filters {
   location: District | 'all'
   type: ProjectType | 'all'
-  budget: BudgetBracket | 'all'
   status: ProjectStatus | 'all'
 }
 
 const DEFAULT_FILTERS: Filters = {
   location: 'all',
   type: 'all',
-  budget: 'all',
   status: 'all',
 }
 
@@ -41,7 +39,6 @@ export default function ProjectDiscovery() {
       setFilters({
         location: (detail.location as District) || 'all',
         type: (detail.type as ProjectType) || 'all',
-        budget: 'all',
         status: (detail.status as ProjectStatus) || 'all',
       })
     }
@@ -53,7 +50,6 @@ export default function ProjectDiscovery() {
     return projects.filter((p) => {
       if (filters.location !== 'all' && p.district !== filters.location) return false
       if (filters.type !== 'all' && p.type !== filters.type) return false
-      if (filters.budget !== 'all' && p.budgetBracket !== filters.budget) return false
       if (filters.status !== 'all' && p.status !== filters.status) return false
       return true
     })
@@ -62,7 +58,7 @@ export default function ProjectDiscovery() {
   // Desktop filter bar
   const filterBar = (
     <div className="bg-white border border-[var(--color-hairline)] p-5 mb-10 shadow-[var(--shadow-architectural)]">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
         {/* Location */}
         <div>
           <label className="type-label-code text-[var(--color-slate)] block mb-1.5">
@@ -94,23 +90,6 @@ export default function ProjectDiscovery() {
             <option value="residence">{t('filterTypeResidence')}</option>
             <option value="duplex">{t('filterTypeDuplex')}</option>
             <option value="commercial">{t('filterTypeCommercial')}</option>
-          </select>
-        </div>
-
-        {/* Budget */}
-        <div>
-          <label className="type-label-code text-[var(--color-slate)] block mb-1.5">
-            {t('filterBudget')}
-          </label>
-          <select
-            value={filters.budget}
-            onChange={(e) => setFilter('budget', e.target.value as Filters['budget'])}
-            className="w-full bg-[var(--color-surface-container-low)] border border-[var(--color-hairline)] text-[var(--color-on-surface)] type-body-sm py-2.5 px-3 focus:border-[var(--color-basalt)] focus:outline-none"
-          >
-            <option value="all">{t('filterBudgetAll')}</option>
-            <option value="5-10">৳5 Cr – ৳10 Cr</option>
-            <option value="10-25">৳10 Cr – ৳25 Cr</option>
-            <option value="25+">৳25 Cr+</option>
           </select>
         </div>
 
@@ -219,35 +198,83 @@ export default function ProjectDiscovery() {
           </div>
         )}
 
-        {/* Map view — placeholder for map provider integration */}
+        {/* Static map view — ready for a map provider without breaking the layout */}
         {view === 'map' && (
-          <div
-            className="border border-[var(--color-hairline)] bg-[var(--color-surface-low)] flex items-center justify-center min-h-[480px] text-center p-8"
-            aria-label="Map view — project locations in Bangladesh"
-          >
-            <div className="space-y-3">
-              <p className="type-headline-md text-[var(--color-basalt)]">Map view</p>
-              <p className="type-body-md text-[var(--color-slate)] max-w-sm">
-                {t('mapPlaceholder')}
-              </p>
-              <p className="type-label-code text-[var(--color-terracotta)] text-[9px]">
-                [TODO: Wire up Leaflet / Mapbox map provider]
-              </p>
-              {/* Project coordinate list for screen readers */}
-              <ul className="mt-6 text-left space-y-2 max-w-xs mx-auto" aria-label="Project locations">
-                {filtered.filter(p => p.mapCoords).map((p) => (
-                  <li key={p.id} className="type-body-sm text-[var(--color-on-surface-variant)]">
-                    <span className="font-medium text-[var(--color-basalt)]">{p.title[locale]}</span>
-                    {' — '}{p.location[locale]}
-                    {p.mapCoords && (
-                      <span className="type-label-code text-[var(--color-slate)] ml-2">
-                        [{p.mapCoords[0].toFixed(4)}, {p.mapCoords[1].toFixed(4)}]
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-6 items-stretch">
+            <div
+              className="relative min-h-[420px] overflow-hidden border border-[var(--color-hairline)] bg-[#e8eee9] p-4 sm:p-6"
+              aria-label="Map view — project locations in Bangladesh"
+            >
+              <div className="absolute inset-0 opacity-70" aria-hidden="true">
+                <svg viewBox="0 0 800 500" className="h-full w-full" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="map-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+                      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#cbd8ce" strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <rect width="800" height="500" fill="url(#map-grid)" />
+                  <path d="M115 0 C220 95 170 150 260 220 S330 380 285 500" fill="none" stroke="#b4cfc7" strokeWidth="22" opacity=".55" />
+                  <path d="M520 0 C470 100 575 145 500 245 S590 385 535 500" fill="none" stroke="#b4cfc7" strokeWidth="17" opacity=".5" />
+                  <path d="M0 330 C155 290 215 360 360 315 S615 270 800 325" fill="none" stroke="#c0d9d0" strokeWidth="12" opacity=".7" />
+                  <path d="M80 75 L690 75 M80 420 L700 420" stroke="#d2ddd4" strokeWidth="2" strokeDasharray="8 12" />
+                </svg>
+              </div>
+              <div className="relative z-10 flex items-start justify-between">
+                <div>
+                  <p className="type-label-code text-[var(--color-terracotta)]">{t('viewMap')}</p>
+                  <p className="type-body-sm text-[var(--color-slate)] mt-1 max-w-xs">{t('mapPlaceholder')}</p>
+                </div>
+                <span className="type-label-code bg-white/80 px-2.5 py-1 text-[var(--color-slate)]">
+                  {filtered.length} {locale === 'bn' ? 'টি' : 'sites'}
+                </span>
+              </div>
+              {filtered.filter((p) => p.mapCoords).map((project, index) => {
+                const positions = [
+                  { left: '36%', top: '35%' },
+                  { left: '48%', top: '28%' },
+                  { left: '72%', top: '62%' },
+                  { left: '31%', top: '49%' },
+                ]
+                const position = positions[index % positions.length]
+                return (
+                  <div
+                    key={project.id}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+                    style={position}
+                    title={project.title[locale]}
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-[var(--color-terracotta)] text-[10px] font-bold text-white shadow-lg">
+                      {index + 1}
+                    </span>
+                  </div>
+                )
+              })}
+              <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center gap-2 bg-white/85 px-3 py-2 backdrop-blur-sm">
+                <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-terracotta)]" />
+                <span className="type-label-code text-[var(--color-slate)]">{t('viewMap')}</span>
+              </div>
             </div>
+
+            <ul className="grid content-start gap-3" aria-label="Project locations">
+              {filtered.filter((p) => p.mapCoords).map((p, index) => (
+                <li key={p.id} className="border border-[var(--color-hairline)] bg-white p-4 shadow-[var(--shadow-architectural)]">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-basalt)] text-xs font-bold text-white">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="type-headline-md text-[var(--color-basalt)]">{p.title[locale]}</p>
+                      <p className="type-body-sm mt-1 text-[var(--color-slate)]">{p.location[locale]}</p>
+                      {p.mapCoords && (
+                        <p className="type-label-code mt-2 text-[var(--color-slate)]">
+                          {p.mapCoords[0].toFixed(4)}, {p.mapCoords[1].toFixed(4)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

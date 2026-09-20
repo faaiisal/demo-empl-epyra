@@ -23,10 +23,10 @@
   --color-surface-container-low: #f4f5f8;
 
   /* ---- Font families ---- */
-  --font-serif: 'Newsreader', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, monospace;
-  --font-bangla: 'Noto Sans Bengali', 'Plus Jakarta Sans', sans-serif;
+  --font-serif: var(--loaded-font-serif), 'Newsreader', Georgia, serif;
+  --font-sans: var(--loaded-font-sans), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: var(--loaded-font-mono), 'Space Mono', ui-monospace, monospace;
+  --font-bangla: var(--loaded-font-bangla), 'Noto Sans Bengali', sans-serif;
 
   /* ---- Font sizes ---- */
   --text-display: 4.5rem;    /* 72px */
@@ -85,20 +85,110 @@ body {
   line-height: var(--text-body-md--line-height);
 }
 
-/* Bangla locale adjustments — larger text, more line-height */
-:lang(bn) body,
-:lang(bn) p,
-:lang(bn) li {
-  font-family: var(--font-bangla);
-  font-size: 1.0625rem; /* 17px */
-  line-height: 1.75;
+.hero-heading {
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+  line-height: 1.3;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
-:lang(bn) h1,
-:lang(bn) h2,
-:lang(bn) h3 {
+/* Keep both locales on one predictable type scale. */
+:where(:lang(bn), .locale-bn) {
   font-family: var(--font-bangla);
-  line-height: 1.4;
+  line-height: var(--text-body-md--line-height);
+  font-weight: 400;
+}
+
+/* Bengali uses its own glyph set, but never a larger or looser scale. */
+html:lang(bn) body,
+html:lang(bn) button,
+html:lang(bn) input,
+html:lang(bn) select,
+html:lang(bn) textarea {
+  font-family: var(--font-bangla);
+}
+
+.locale-bn,
+.locale-bn button,
+.locale-bn input,
+.locale-bn select,
+.locale-bn textarea {
+  font-family: var(--font-bangla);
+}
+
+html:lang(bn) .type-display,
+html:lang(bn) .type-headline-xl,
+html:lang(bn) .type-headline-lg,
+html:lang(bn) .type-headline-md,
+html:lang(bn) .type-body-lg,
+html:lang(bn) .type-body-md,
+html:lang(bn) .type-body-sm,
+html:lang(bn) .type-label-code,
+html:lang(bn) .type-label-caps {
+  font-family: var(--font-bangla);
+  letter-spacing: normal;
+}
+
+html:lang(bn) .hero-heading {
+  font-family: var(--font-bangla);
+  letter-spacing: normal;
+}
+
+.locale-bn .type-display,
+.locale-bn .type-headline-xl,
+.locale-bn .type-headline-lg,
+.locale-bn .type-headline-md,
+.locale-bn .type-body-lg,
+.locale-bn .type-body-md,
+.locale-bn .type-body-sm,
+.locale-bn .type-label-code,
+.locale-bn .type-label-caps,
+.locale-bn .hero-heading {
+  font-family: var(--font-bangla);
+  letter-spacing: normal;
+}
+
+html:lang(bn) .type-display {
+  line-height: var(--text-display--line-height);
+  font-weight: 400;
+}
+
+html:lang(bn) .type-headline-xl {
+  line-height: var(--text-headline-xl--line-height);
+  font-weight: 400;
+}
+
+html:lang(bn) .type-headline-lg {
+  line-height: var(--text-headline-lg--line-height);
+  font-weight: 500;
+}
+
+html:lang(bn) .type-headline-md {
+  line-height: var(--text-headline-md--line-height);
+  font-weight: 600;
+}
+
+html:lang(bn) .type-body-lg {
+  line-height: var(--text-body-lg--line-height);
+  font-weight: 400;
+}
+
+html:lang(bn) .type-body-md {
+  line-height: var(--text-body-md--line-height);
+  font-weight: 400;
+}
+
+html:lang(bn) .type-body-sm {
+  line-height: var(--text-body-sm--line-height);
+  font-weight: 400;
+}
+
+html:lang(bn) .type-label-code,
+html:lang(bn) .type-label-caps {
+  line-height: var(--text-label--line-height);
+  font-weight: 500;
+  text-transform: none;
 }
 
 /* ================================================================
@@ -147,6 +237,13 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-body-md);
   line-height: var(--text-body-md--line-height);
+  font-weight: 400;
+}
+
+.type-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+  line-height: var(--text-body-sm--line-height);
   font-weight: 400;
 }
 

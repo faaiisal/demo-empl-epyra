@@ -1,42 +1,9 @@
 import type { Metadata } from 'next'
-import { Newsreader, Plus_Jakarta_Sans, Space_Mono, Noto_Sans_Bengali } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import { notFound } from 'next/navigation'
 import '@/app/globals.css'
-
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--loaded-font-serif',
-  display: 'swap',
-  preload: true,
-})
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--loaded-font-sans',
-  display: 'swap',
-  preload: true,
-})
-
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  variable: '--loaded-font-mono',
-  display: 'swap',
-})
-
-const notoSansBengali = Noto_Sans_Bengali({
-  subsets: ['bengali'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--loaded-font-bangla',
-  display: 'swap',
-})
 
 type Props = {
   children: React.ReactNode
@@ -71,24 +38,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   setRequestLocale(locale)
-  const messages = await getMessages()
-
-  const fontVars = [
-    newsreader.variable,
-    plusJakartaSans.variable,
-    spaceMono.variable,
-    notoSansBengali.variable,
-  ].join(' ')
+  const messages = (await import(`@/i18n/messages/${locale}.json`)).default
 
   return (
-    <html lang={locale} className={fontVars}>
-      <head>
-        {/* Preconnect for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body>
-        <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <div className={locale === 'bn' ? 'locale-bn' : 'locale-en'}>
           {/* Skip to main content for accessibility */}
           <a
             href="#main-content"
@@ -97,8 +51,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             {locale === 'bn' ? 'মূল বিষয়বস্তুতে যান' : 'Skip to main content'}
           </a>
           {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+      </div>
+    </NextIntlClientProvider>
   )
 }
