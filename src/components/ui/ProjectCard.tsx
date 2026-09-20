@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { Badge } from './Badge'
 import { Button } from './Button'
-import { formatBDT } from '@/lib/formatBDT'
 import type { Project } from '@/types/project'
 import { useTranslations, useLocale } from 'next-intl'
 
@@ -20,10 +19,6 @@ const statusLabel: Record<Project['status'], string> = {
 export function ProjectCard({ project }: ProjectCardProps) {
   const t = useTranslations('projects')
   const locale = useLocale() as 'en' | 'bn'
-
-  const minPrice = project.unitTypes.length > 0
-    ? Math.min(...project.unitTypes.map((u) => u.priceFromCr))
-    : null
 
   return (
     <article className="bg-white border border-[var(--color-hairline)] flex flex-col group hover:shadow-[var(--shadow-architectural)] transition-shadow duration-300">
@@ -68,14 +63,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
                   ? `${project.unitTypes[0].areaSqFtMin.toLocaleString()} – ${project.unitTypes[project.unitTypes.length - 1].areaSqFtMax.toLocaleString()} sq.ft`
                   : `${project.unitTypes[0].areaSqFtMin.toLocaleString()} sq.ft`}
               </dt>
-            </div>
-          )}
-          {minPrice !== null && (
-            <div className="flex justify-between type-body-sm">
-              <dt className="text-[var(--color-slate)]">{t('from')}</dt>
-              <dd className="font-bold text-[var(--color-basalt)]">
-                {formatBDT(minPrice, locale)}
-              </dd>
             </div>
           )}
         </dl>
